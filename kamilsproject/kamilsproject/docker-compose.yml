@@ -1,0 +1,24 @@
+version: '3.8'
+services:
+  db:
+    image: postgres:15
+    environment:
+      POSTGRES_DB: shopdb
+      POSTGRES_USER: shopuser
+      POSTGRES_PASSWORD: secretpw
+    ports:
+      - "5432:5432"
+
+  backend:
+    # Statt nur 'image:' hier 'build: .' hinzufügen
+    build: .
+    image: onlineshop-backend:latest
+    depends_on:
+      - db
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:postgresql://db:5432/shopdb
+      SPRING_DATASOURCE_USERNAME: shopuser
+      SPRING_DATASOURCE_PASSWORD: secretpw
+      SPRING_JPA_HIBERNATE_DDL_AUTO: update
+    ports:
+      - "81:8080"

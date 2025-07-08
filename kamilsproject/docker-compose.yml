@@ -1,0 +1,30 @@
+version: '3.8'
+services:
+  db:
+    image: postgres:15
+    environment:
+      - POSTGRES_DB=shopdb
+      - POSTGRES_USER=shopuser
+      - POSTGRES_PASSWORD=secretpw
+    ports:
+      - "5432:5432"
+    volumes:
+      - db_data:/var/lib/postgresql/data
+
+  backend:
+    build: .
+    environment:
+      - SPRING_DATASOURCE_URL=jdbc:postgresql://db:5432/shopdb
+      - SPRING_DATASOURCE_USERNAME=shopuser
+      - SPRING_DATASOURCE_PASSWORD=secretpw
+      - SPRING_DATASOURCE_DRIVER_CLASS_NAME=org.postgresql.Driver
+      - SPRING_JPA_HIBERNATE_DDL_AUTO=update
+      - SPRING_SECURITY_USER_NAME=admin
+      - SPRING_SECURITY_USER_PASSWORD=admin
+    ports:
+      - "81:8080"
+    depends_on:
+      - db
+
+volumes:
+  db_data:
